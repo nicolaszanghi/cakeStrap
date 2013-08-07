@@ -156,7 +156,7 @@
 				<?php echo "<?php endif; ?>\n\n"; ?>
 				
 				<div class="actions">
-					<?php echo "<?php echo \$this->Html->link('<i class=\"icon-plus icon-white\"></i> '.__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'add'), array('class' => 'btn btn-primary', 'escape' => false)); ?>\n"; ?>
+					<?php echo "<?php echo \$this->Html->link('<i class=\"glyphicon glyphicon-plus\"></i> '.__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'add'), array('class' => 'btn btn-success', 'escape' => false)); ?>\n"; ?>
 				</div><!-- .actions -->
 				
 			</div><!-- .related -->
