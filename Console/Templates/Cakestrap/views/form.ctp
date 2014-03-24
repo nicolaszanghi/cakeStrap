@@ -19,77 +19,64 @@
 
 <div id="page-container" class="row">
 
-	<div id="sidebar" class="col-lg-3">
-		
-		<div class="actions">
-		
-			<ul class="nav nav-list bs-docs-sidenav">
-<?php
-                if (strpos($action, 'add') === false):
-					echo "\t\t\t\t<li><?php echo \$this->Form->postLink(__('Delete'), array('action' => 'delete', \$this->Form->value('{$modelClass}.{$primaryKey}')), null, __('Are you sure you want to delete # %s?', \$this->Form->value('{$modelClass}.{$primaryKey}'))); ?></li>\n";
-				endif;
-                echo "\t\t\t\t<li><?php echo \$this->Html->link(__('List " . $pluralHumanName . "'), array('action' => 'index')); ?></li>\n";
-                $done = array();
-                foreach ($associations as $type => $data) {
-                    foreach ($data as $alias => $details) {
-                        if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-                            echo "\t\t\t\t<li><?php echo \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), array('controller' => '{$details['controller']}', 'action' => 'index')); ?></li>\n";
-                            echo "\t\t\t\t<li><?php echo \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'add')); ?></li>\n";
-                            $done[] = $details['controller'];
-                        }
+    <div id="page-content" class="col-lg-12">
+
+        <div class="<?php echo $pluralVar; ?> form">
+
+            <div class="row">
+                <div class="col-lg-9">
+                    <h2><?php printf("<?php echo __('%s %s'); ?>", Inflector::humanize($action), $singularHumanName); ?></h2>
+                </div>
+                <div class="col-lg-3"p>
+                    <div class="actions pull-right">
+                        <?php if (strpos($action, 'add') === false):
+                            echo "<?php echo \$this->Html->link('<i class=\"fa fa-info\"> </i>'.__('View'), array('action' => 'view', \$this->Form->value('{$modelClass}.{$primaryKey}')), array('class' => 'btn btn-info', 'escape' => false)); ?>\n";
+                            echo "\t\t\t\t\t\t<?php echo \$this->Form->postLink('<i class=\"fa fa-times\"> </i>'.__('Delete'), array('action' => 'delete', \$this->Form->value('{$modelClass}.{$primaryKey}')), array('class' => 'btn btn-danger', 'escape' => false), __('Are you sure you want to delete # %s?', \$this->Form->value('{$modelClass}.{$primaryKey}'))); ?>\n";
+                        endif;?>
+                    </div><!-- .actions -->
+                </div>
+            </div>
+
+
+            <?php echo "<?php echo \$this->Form->create('{$modelClass}', array('class' => 'form')); ?>\n"; ?>
+            <fieldset>
+                <?php foreach ($fields as $field) {
+                    if (strpos($action, 'add') !== false && $field == $primaryKey) {
+                        continue;
+                    } elseif (!in_array($field, array('created', 'modified', 'updated'))) {
+                        echo "\t\t\t\t\t<?php echo \$this->Form->input('{$modelClass}.{$field}'); ?>\n";
+                        /*
+                             echo "<div class=\"control-group\">\n";
+                             echo "\t<?php echo \$this->Form->label('{$field}', '{$field}', array('class' => 'control-label'));?>\n";
+                             echo "\t<div class=\"controls\">\n";
+                             echo "\t\t<?php echo \$this->Form->input('{$field}', array('class' => 'span12')); ?>\n";
+                             echo "\t</div><!-- .controls -->\n";
+                             echo "</div><!-- .control-group -->\n";
+                             echo "\n";
+                             */
                     }
                 }
-				?>
-			</ul><!-- .nav nav-list bs-docs-sidenav -->
-		
-		</div><!-- .actions -->
-		
-	</div><!-- #sidebar .col-lg-3 -->
-	
-	<div id="page-content" class="col-lg-9">
+                if (!empty($associations['hasAndBelongsToMany'])) {
+                    foreach ($associations['hasAndBelongsToMany'] as $assocName => $assocData) {
+                        echo "\t\t\t\t<?php echo \$this->Form->input('{$assocName}');?>\n";
+                    }
+                }
+                ?>
+            </fieldset>
+            <?php
+            if ($action == 'delete' || $action == 'admin_delete')
+                $class = 'btn-danger';
+            elseif (in_array($action, array('add', 'edit', 'admin_add', 'admin_edit')))
+                $class = 'btn-success';
+            else
+                $class = 'btn-primary';
+            $submit = array('edit' => __('Save'), 'add' => __('Add'), 'delete' => __('Delete'), 'admin_edit' => __('Save'), 'admin_add' => __('Add'), 'admin_delete' => __('Delete'));
+            echo "\t<?php echo \$this->Form->submit(__('$submit[$action]'), array('class' => 'btn $class', 'div' => array('class' => 'form-group'))); ?>\n";
+            echo "\t\t\t<?php echo \$this->Form->end(); ?>\n";
+            ?>
 
-		<div class="<?php echo $pluralVar; ?> form">
-		
-			<?php echo "<?php echo \$this->Form->create('{$modelClass}', array('inputDefaults' => array('label' => false), 'class' => 'form')); ?>\n"; ?>
-				<fieldset>
-					<h2><?php printf("<?php echo __('%s %s'); ?>", Inflector::humanize($action), $singularHumanName); ?></h2>
-<?php foreach ($fields as $field) {
-					if (strpos($action, 'add') !== false && $field == $primaryKey) {
-						continue;
-					} elseif (!in_array($field, array('created', 'modified', 'updated'))) {
-                        echo "\t\t\t\t\t<?php echo \$this->Cakestrap->input('{$modelClass}.{$field}'); ?>\n";
-                   /*
-						echo "<div class=\"control-group\">\n";
-						echo "\t<?php echo \$this->Form->label('{$field}', '{$field}', array('class' => 'control-label'));?>\n";
-						echo "\t<div class=\"controls\">\n";
-						echo "\t\t<?php echo \$this->Form->input('{$field}', array('class' => 'span12')); ?>\n";
-						echo "\t</div><!-- .controls -->\n";
-						echo "</div><!-- .control-group -->\n";
-						echo "\n";
-                        */
-					}
-				}
-				if (!empty($associations['hasAndBelongsToMany'])) {
-					foreach ($associations['hasAndBelongsToMany'] as $assocName => $assocData) {
-						echo "\t\t\t\t<?php echo \$this->Cakestrap->input('{$assocName}');?>\n";
-					}
-				}
-			?>
-				</fieldset>
-			<?php
-                if ($action == 'delete' || $action == 'admin_delete')
-                    $class = 'btn-danger';
-                elseif (in_array($action, array('add', 'edit', 'admin_add', 'admin_edit')))
-                    $class = 'btn-success';
-                else
-                    $class = 'btn-primary';
-                $submit = array('edit' => __('Save'), 'add' => __('Add'), 'delete' => __('Delete'), 'admin_edit' => __('Save'), 'admin_add' => __('Add'), 'admin_delete' => __('Delete'));
-				echo "\t<?php echo \$this->Form->submit(__('$submit[$action]'), array('class' => 'btn $class', 'div' => array('class' => 'form-group'))); ?>\n";
-				echo "\t\t\t<?php echo \$this->Form->end(); ?>\n";
-			?>
-			
-		</div>
-			
-	</div><!-- #page-content .col-lg-9 -->
+        </div>
+
+    </div><!-- #page-content .col-lg-12 -->
 
 </div><!-- #page-container .row-fluid -->
