@@ -38,7 +38,7 @@
             </div>
 
 
-            <?php echo "<?php echo \$this->Form->create('{$modelClass}', array('class' => 'form')); ?>\n"; ?>
+            <?php echo "<?php echo \$this->Form->create('{$modelClass}'); ?>\n"; ?>
             <fieldset>
                 <?php foreach ($fields as $field) {
                     if (strpos($action, 'add') !== false && $field == $primaryKey) {
